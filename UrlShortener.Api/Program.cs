@@ -75,7 +75,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5000") // ✅ Port của frontend
+            .WithOrigins("http://localhost:5174") // ✅ Port của frontend
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();

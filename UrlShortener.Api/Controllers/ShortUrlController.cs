@@ -6,7 +6,7 @@ using UrlShortener.Api.Services;
 namespace UrlShortener.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize]
     public class ShortUrlController : ControllerBase
 

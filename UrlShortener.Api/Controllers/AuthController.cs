@@ -20,8 +20,20 @@ namespace UrlShortener.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var result = await _authService.RegisterAsync(request.Email, request.Password);
-            return Ok(result);
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+                return BadRequest(new { message = "Email và password không được để trống." });
+
+            try
+            {
+                var result = await _authService.RegisterAsync(request.Email, request.Password);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi ra console (hoặc logging framework)
+                Console.WriteLine(ex);
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         // POST: api/auth/login

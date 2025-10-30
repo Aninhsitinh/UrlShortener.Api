@@ -43,6 +43,7 @@ namespace UrlShortener.Api.Services
                 throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
 
             return await GenerateTokensAsync(user);
+
         }
 
         // 🟦 Đăng nhập

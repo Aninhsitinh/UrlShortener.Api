@@ -1,68 +1,30 @@
-﻿import { defineStore } from "pinia";
-import axios from "axios";
+﻿import { defineStore } from 'pinia';
+import api from '../api/axios';
 
-const API_BASE_URL = "https://localhost:7176/api"; // ⚠️ Dùng đúng port backend của bạn
-
-export const useAuthStore = defineStore("auth", {
+export const useAuthStore = defineStore('auth', {
     state: () => ({
-        user: null,
-        token: localStorage.getItem("token") || null,
+        accessToken: localStorage.getItem('accessToken') || '',
+        refreshToken: localStorage.getItem('refreshToken') || '',
     }),
-
     actions: {
-        async register(email, password) {
-            try {
-                const res = await axios.post(`${API_BASE_URL}/Auth/register`, {
-                    email,
-                    password,
-                });
-                console.log("Register success:", res.data);
-                this.token = res.data.accessToken;
-                localStorage.setItem("token", this.token);
-                this.user = { email };
-                return true;
-            } catch (err) {
-                // ✅ Ghi log lỗi chi tiết
-                console.error("Register error:", err.response?.data || err.message);
-
-                // ✅ Hiển thị lỗi thực tế (Identity lỗi password, email, v.v.)
-                alert(
-                    "Register failed: " +
-                    (err.response?.data?.message ||
-                        JSON.stringify(err.response?.data) ||
-                        err.message)
-                );
-                throw err;
-            }
-        },
-
         async login(email, password) {
-            try {
-                const res = await axios.post(`${API_BASE_URL}/Auth/login`, {
-                    email,
-                    password,
-                });
-                console.log("Login success:", res.data);
-                this.token = res.data.accessToken;
-                localStorage.setItem("token", this.token);
-                this.user = { email };
-                return true;
-            } catch (err) {
-                console.error("Login error:", err.response?.data || err.message);
-                alert(
-                    "Login failed: " +
-                    (err.response?.data?.message ||
-                        JSON.stringify(err.response?.data) ||
-                        err.message)
-                );
-                throw err;
-            }
+            const res = await api.post('/Auth/login', { email, password });
+            this.accessToken = res.data.accessToken;
+            this.refreshToken = res.data.refreshToken;
+            localStorage.setItem('accessToken', this.accessToken);
+            localStorage.setItem('refreshToken', this.refreshToken);
         },
-
+        async register(email, password) {
+            const res = await api.post('/Auth/register', { email, password });
+            this.accessToken = res.data.accessToken;
+            this.refreshToken = res.data.refreshToken;
+            localStorage.setItem('accessToken', this.accessToken);
+            localStorage.setItem('refreshToken', this.refreshToken);
+        },
         logout() {
-            this.token = null;
-            this.user = null;
-            localStorage.removeItem("token");
+            this.accessToken = '';
+            this.refreshToken = '';
+            localStorage.clear();
         },
     },
 });
